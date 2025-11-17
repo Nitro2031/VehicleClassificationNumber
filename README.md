@@ -1,0 +1,2 @@
+# VehicleClassificationNumber
+自動車分類番号一覧
