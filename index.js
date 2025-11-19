@@ -44,6 +44,10 @@ createApp({
                 const csvText = await fetch(`./${title}.csv`).then(r => r.text())
                 // CSVパース関数
                 const result = parseCSV2(csvText)
+                // IDを自動付与
+                result.items.forEach((item, index) => {
+                    item.id = index + 1;
+                });
                 items.value = result.items
             } catch (error) {
                 console.error('CSV読み込みエラー:', error)
