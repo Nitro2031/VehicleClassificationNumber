@@ -22,12 +22,6 @@ createApp({
         const theme = useTheme()        // テーマ切替用
         const title = '自動車分類番号一覧'
 
-        const filteredItems = computed(() => {
-            return items.value.filter(item =>
-                !selectedCategory.value.length || selectedCategory.value.includes(item.区分)
-            )
-        })
-
         /**
          * テーマ切替
          */
