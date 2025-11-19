@@ -1,8 +1,10 @@
 // CSVパース用の関数をCDN経由で読み込み
 import { parseCSV2 } from "https://cdn.jsdelivr.net/gh/Nitro2031/Utilities@1.1.1/csvParser.min.js?v=20250927"
-import "./prefers-color-scheme.js";
+import { prefersColorScheme } from "./prefers-color-scheme.js";
 const { createApp, ref, onMounted, onBeforeUnmount, computed } = Vue
 const { createVuetify, useTheme } = Vuetify
+
+const title = '自動車分類番号一覧'
 
 const vuetify = createVuetify({
     theme: {
@@ -11,8 +13,6 @@ const vuetify = createVuetify({
     },
     icons: { defaultSet: 'mdi' }
 })
-
-const title = '自動車分類番号一覧'
 
 createApp({
     setup() {
