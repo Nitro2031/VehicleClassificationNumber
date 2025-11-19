@@ -37,7 +37,9 @@ createApp({
             prefersColorScheme(theme);
 
             // ウィンドウリサイズ時のイベントリスナーを登録
-            window.addEventListener('resize', resizeHandler)
+            window.addEventListener('resize', () => {
+                tableHeight.value = window.innerHeight - margin;
+            });
             try {
                 const csvText = await fetch(`./${title}.csv`).then(r => r.text())
                 // CSVパース関数
