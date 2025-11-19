@@ -12,6 +12,8 @@ const vuetify = createVuetify({
     icons: { defaultSet: 'mdi' }
 })
 
+const title = '自動車分類番号一覧'
+
 createApp({
     setup() {
         const loading = ref(true)       // ローディング状態を管理
@@ -20,7 +22,6 @@ createApp({
         const margin = 104              // マージン調整用の値
         const tableHeight = ref(window.innerHeight - margin)
         const theme = useTheme()        // テーマ切替用
-        const title = '自動車分類番号一覧'
 
         /**
          * テーマ切替
