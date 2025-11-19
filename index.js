@@ -63,7 +63,6 @@ createApp({
             loading,
             items,
             selectedCategory,
-            filteredItems,
             tableHeight,
             toggleTheme,
             theme,
@@ -74,17 +73,7 @@ createApp({
       <v-app-bar>
         <v-app-bar-title>
           <div style="display: flex; align-items: center; width: 100%;">
-            <h1 style="font-size: medium;">車体の形状</h1>
-            <v-spacer></v-spacer>
-            <v-select
-              v-model="selectedCategory"
-              :items="Array.from(new Set(items.map(i => i.区分)))"
-              label="区分"
-              multiple
-              chips
-              clearable
-              class="mt-5"
-            ></v-select>
+            <h1 style="font-size: medium;">${title}</h1>
             <v-spacer></v-spacer>
             <v-btn @click="toggleTheme" icon>
               <v-icon>{{ theme.global.current.value.dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
@@ -94,7 +83,7 @@ createApp({
       </v-app-bar>
       <v-main>
         <v-data-table
-          :items="filteredItems"
+          :items="items"
           :loading="loading"
           :height="tableHeight + 'px'"
           dense
