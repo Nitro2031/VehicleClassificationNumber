@@ -1,6 +1,6 @@
 // CSVパース用の関数をCDN経由で読み込み
 import { parseCSV2 } from "https://cdn.jsdelivr.net/gh/Nitro2031/Utilities@1.1.1/csvParser.min.js?v=20250927"
-
+import { prefersColorScheme } from "prefers-color-scheme.js";
 const { createApp, ref, onMounted, onBeforeUnmount, computed } = Vue
 const { createVuetify, useTheme } = Vuetify
 
@@ -32,20 +32,16 @@ createApp({
          * テーマ切替
          */
         const toggleTheme = () => {
-            theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-        }
-
-        /**
-         * ウィンドウサイズ監視用
-         */
-        const resizeHandler = () => {
-            tableHeight.value = window.innerHeight - margin
+            const toggleThemes = { light: 'dark', dark: 'light' };
+            theme.global.name.value = toggleThemes[theme.global.name.value];
         }
 
         /**
          * 初期化
          */
         onMounted(async () => {
+            prefersColorScheme(theme);
+
             // ウィンドウリサイズ時のイベントリスナーを登録
             window.addEventListener('resize', resizeHandler)
             try {
