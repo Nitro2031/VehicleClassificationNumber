@@ -74,7 +74,9 @@ createApp({
       <v-app-bar>
         <v-app-bar-title>
           <div style="display: flex; align-items: center; width: 100%;">
-            <h1 style="font-size: medium;">${title}</h1>
+            <a href="https://github.com/Nitro2031/VehicleClassificationNumber" target="_blank" rel="noopener noreferrer">
+              <h1 style="font-size: medium;">${title}</h1>
+            </a>
             <v-spacer></v-spacer>
             <v-btn @click="toggleTheme" icon>
               <v-icon>{{ theme.global.current.value.dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
@@ -96,7 +98,6 @@ createApp({
           class="mb-4"
         ></v-data-table>
       </v-main>
-      <a href="https://github.com/NITOH-Hisashi/AutomotiveShapes" target="_blank" rel="noopener noreferrer">自動車の用途等の区分について（依命通達）</a>
     </v-app>
   `
 }).use(vuetify).mount('#app')
