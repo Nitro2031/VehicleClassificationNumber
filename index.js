@@ -4,100 +4,102 @@ import { prefersColorScheme } from "./prefers-color-scheme.js";
 const { createApp, ref, onMounted, onBeforeUnmount, computed } = Vue
 const { createVuetify, useTheme } = Vuetify
 
-const title = '自動車分類番号一覧'
-
 const vuetify = createVuetify({
-    theme: {
-        defaultTheme: 'dark',
-        themes: { light: { dark: false }, dark: { dark: true } },
-    },
-    icons: { defaultSet: 'mdi' }
+  theme: {
+    defaultTheme: 'dark',
+    themes: { light: { dark: false }, dark: { dark: true } },
+  },
+  icons: { defaultSet: 'mdi' }
 })
 
-createApp({
-    setup() {
+const AppFilePath = './index.vue'
+
+/** メインアプリケーションの作成とマウント
+ * - index.vue をフェッチしてテンプレートとして使用
+ */
+fetch(AppFilePath, {
+  headers: {
+    "Content-Type": "text/x-vue",
+  },
+})
+  .then(r => r.text())
+  .then(xml => {
+    /* template部分を抽出しないといけないので、タグを削除する
+ * index.vue の中身をそのまま使うわけにはいかない
+ * index.vue は template タグで囲まれていないとVueファイルと認識されないため
+ */
+    const template = xml.replace('<template>', '').replace('</template>', '');
+    const app = createApp({
+      template: template,
+      components: {
+      },
+      setup() {
+        const title = ref('自動車分類番号一覧')
+        const URL = ref('https://github.com/Nitro2031/VehicleClassificationNumber')
+
         const loading = ref(true)       // ローディング状態を管理
         const items = ref([])           // アイテムリスト
         const selectedCategory = ref([])
+
         const margin = 104              // マージン調整用の値
         const tableHeight = ref(window.innerHeight - margin)
+
         const theme = useTheme()        // テーマ切替用
 
         /**
          * テーマ切替
          */
         const toggleTheme = () => {
-            const toggleThemes = { light: 'dark', dark: 'light' };
-            theme.global.name.value = toggleThemes[theme.global.name.value];
+          const toggleThemes = { light: 'dark', dark: 'light' };
+          theme.global.name.value = toggleThemes[theme.global.name.value];
         }
 
         /**
          * 初期化
          */
         onMounted(async () => {
-            prefersColorScheme(theme);
+          prefersColorScheme(theme);
 
-            // ウィンドウリサイズ時のイベントリスナーを登録
-            window.addEventListener('resize', () => {
-                tableHeight.value = window.innerHeight - margin;
+          // ウィンドウリサイズ時のイベントリスナーを登録
+          window.addEventListener('resize', () => {
+            tableHeight.value = window.innerHeight - margin;
+          });
+
+          try {
+            const csvText = await fetch(`./${title.value}.csv`).then(r => r.text())
+            // CSVパース関数
+            const result = parseCSV2(csvText)
+            // IDを自動付与
+            result.items.forEach((item, index) => {
+              item.id = index + 1;
             });
-            try {
-                const csvText = await fetch(`./${title}.csv`).then(r => r.text())
-                // CSVパース関数
-                const result = parseCSV2(csvText)
-                // IDを自動付与
-                result.items.forEach((item, index) => {
-                    item.id = index + 1;
-                });
-                items.value = result.items
-            } catch (error) {
-                console.error('CSV読み込みエラー:', error)
-            }
-            loading.value = false       // ローディング終了
+            items.value = result.items
+          } catch (error) {
+            console.error('CSV読み込みエラー:', error)
+          }
+          loading.value = false       // ローディング終了
         })
 
         onBeforeUnmount(() => {
-            window.removeEventListener('resize', resizeHandler)
+          window.removeEventListener('resize', resizeHandler)
         })
 
         return {
-            loading,
-            items,
-            selectedCategory,
-            tableHeight,
-            toggleTheme,
-            theme,
+          title,
+          URL,
+          loading,
+          items,
+          selectedCategory,
+          tableHeight,
+          toggleTheme,
+          theme,
         }
-    },
-    template: `
-    <v-app>
-      <v-app-bar>
-        <v-app-bar-title>
-          <div style="display: flex; align-items: center; width: 100%;">
-            <a href="https://github.com/Nitro2031/VehicleClassificationNumber" target="_blank" rel="noopener noreferrer">
-              <h1 style="font-size: medium;">${title}</h1>
-            </a>
-            <v-spacer></v-spacer>
-            <v-btn @click="toggleTheme" icon>
-              <v-icon>{{ theme.global.current.value.dark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-            </v-btn>
-          </div>
-        </v-app-bar-title>
-      </v-app-bar>
-      <v-main>
-        <v-data-table
-          :items="items"
-          :loading="loading"
-          :height="tableHeight + 'px'"
-          dense
-          hide-default-footer
-          :items-per-page="-1"
-          multi-sort
-          fixed-header
-          hover
-          class="mb-4"
-        ></v-data-table>
-      </v-main>
-    </v-app>
-  `
-}).use(vuetify).mount('#app')
+      },
+    })
+
+    app.use(vuetify)
+    app.mount('#app')
+  })
+  .catch(err => {
+    console.error(AppFilePath + ' 読み込みに失敗:', err);
+  })
